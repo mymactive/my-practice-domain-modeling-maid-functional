@@ -1,13 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>domain_modeling_made_functional</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include="src/domain/order-taking/Types.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
 </Project>
