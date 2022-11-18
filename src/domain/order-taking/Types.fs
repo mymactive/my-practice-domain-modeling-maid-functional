@@ -1,38 +1,32 @@
-namespace OrderTaking.Types
+namespace OrderTaking.Domain
 
-type WidgetCode = string
-type GizimoCode = string
-type UnitQuantity = int
-type KilogramQuantity = decimal
-
+type WidgetCode = WidgetCode of string
+    // constraint: starting with "W" then 4 digits
+type GizimoCode = GizimoCode of string
+    // constraint: starting with "G" then 3 digits
 type ProductCode =
     | WidgetCode
     | GizimoCode
+
+// Order Quantity related
+type UnitQuantity = UnitQuantity of int
+type KilogramQuantity = KilogramQuantity of decimal
 
 type OrderQuantity =
     | UnitQuantity
     | KilogramQuantity
 
-
 type Undefined = exn
+
+type OrderId = Undefined
+type OrderLineId = Undefined
+type CustomerId = Undefined
 
 type CustomerInfo = Undefined
 type ShippingAddress = Undefined
+type Price = Undefined
 type BillingAddress = Undefined
 type BillingAmount = Undefined
-
-type OrderId = Undefined
-type ProductId = Undefined
-
-[<NoEquality; NoComparison>]
-type OrderLine = {
-    OrderId: OrderId
-    ProductId: ProductId
-    Qty: int
-}
-with
-    member this.Key = 
-        (this.OrderId, this.ProductId)
 
 type Order ={ 
     CustoomerInfo: CustomerInfo
@@ -40,32 +34,29 @@ type Order ={
     BillingAddress: BillingAddress
     OrderLines: OrderLine list
     AmountToBill: BillingAmount }
+    and OrderLine = {
+        id: OrderLineId
+        OrderId : OrderId
+        ProductCode: ProductCode
+        OrderQuantity: OrderQuantity
+        Price: Price
+    }
 
-type QuoteForm = Undefined
-type OrderForm = Undefined
 
-type EnvelopeContents = string
-type CateforizedMail = Quote of QuoteForm | Order of OrderForm
-
-type UnvalidatedOrder = Undefined
+type UnvalitatedOrder = Undefined
 type ValidatedOrder = Undefined
 
-type ValidationResponse<'a> = Async<Result<'a, ValidationError>>
+type PlacedOrderEvents = {
+    AnknowledgmentSent: Undefined
+    OrderPlaced: Undefined
+    BillableOrderPlaced: Undefined
+}
+
+type PlaceOrderError =
+| ValidationError of ValidationError list
 and ValidationError = {
     FieldName: string
     ErrorDescription: string
 }
 
-type ValidateOrder = UnvalidatedOrder -> ValidationResponse<ValidatedOrder>
-
-type ContactId = string
-type PhoneNumber = string
-type EmailAddress = string
-
-[<NoEquality; NoComparison>]
-type Contact = {
-    ContactId: ContactId
-    PhoneNumber: PhoneNumber
-    EmailAddress: EmailAddress
-}
-
+type PlaceOrder = UnvalitatedOrder -> Result<PlacedOrderEvents, PlaceOrderError>
